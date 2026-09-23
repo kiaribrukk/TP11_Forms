@@ -1,11 +1,11 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { InscripcionScreen } from './screens/InscripcionScreen.jsx';
+import { InscripcionScreen } from './screens/InscripcionScreen';
 
 export default function App() {
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
       <InscripcionScreen />
     </>
   );

@@ -1,9 +1,10 @@
-# 🎵 Sonido Sur App - Pantalla de Inscripción
+# 🎵 TP11_Forms - Sonido Sur App
 
-Trabajo Práctico desarrollado para la materia de React Native + Expo.
+Trabajo Práctico N° 11: Formularios con validaciones y estados complejos en React Native con Expo.
 
-## 🚀 Cómo correr el proyecto
+## 🚀 Instalación y ejecución
 
-1. Instalar las dependencias:
+1. Clonar el repositorio o descargar el proyecto.
+2. Instalar las dependencias:
    ```bash
-   npm install @react-native-async-storage/async-storage react-hook-form
+   npm install
