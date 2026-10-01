@@ -1,3 +1,4 @@
+import { useRegistrationContext } from "../src/context/RegistrationContext";
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -38,7 +39,6 @@ export const InscripcionScreen = () => {
     },
   });
 
-  // BONUS: Carga del último email guardado en AsyncStorage al iniciar
   useEffect(() => {
     const precargarEmail = async () => {
       try {
@@ -53,7 +53,6 @@ export const InscripcionScreen = () => {
     precargarEmail();
   }, [setValue]);
 
-  // Manejo del envío del formulario con simulación de servidor y guardado
   const onSubmit = async (data) => {
     setLoading(true);
 
@@ -63,7 +62,6 @@ export const InscripcionScreen = () => {
       console.error('Error al guardar en AsyncStorage', e);
     }
 
-    // BONUS: Simulación de delay de red de 1 segundo
     setTimeout(() => {
       setLoading(false);
       setDatosInscripcion(data);
@@ -91,7 +89,7 @@ export const InscripcionScreen = () => {
           <View style={styles.formContainer}>
             <Text style={styles.title}>Inscripción Sonido Sur</Text>
 
-            {/* Campo: Nombre Completo */}
+            {}
             <Controller
               control={control}
               name="nombreCompleto"
@@ -112,7 +110,7 @@ export const InscripcionScreen = () => {
               )}
             />
 
-            {/* Campo: Email */}
+            {}
             <Controller
               control={control}
               name="email"
@@ -136,7 +134,7 @@ export const InscripcionScreen = () => {
               )}
             />
 
-            {/* Campo: Edad */}
+            {}
             <Controller
               control={control}
               name="edad"
@@ -163,7 +161,7 @@ export const InscripcionScreen = () => {
               )}
             />
 
-            {/* Campo: Tipo de Entrada */}
+            {}
             <View style={styles.pickerSection}>
               <Text style={styles.label}>Tipo de Entrada *</Text>
               <Controller
@@ -213,7 +211,7 @@ export const InscripcionScreen = () => {
               ) : null}
             </View>
 
-            {/* Campo: Teléfono (Opcional) */}
+            {}
             <Controller
               control={control}
               name="telefono"
@@ -236,7 +234,7 @@ export const InscripcionScreen = () => {
               )}
             />
 
-            {/* Botón de Submit */}
+            {}
             <TouchableOpacity
               style={[
                 styles.submitBtn,
