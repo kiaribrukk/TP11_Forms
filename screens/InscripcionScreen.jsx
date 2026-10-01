@@ -18,6 +18,8 @@ import { TicketConfirmacion } from '../components/TicketConfirmacion';
 
 const LAST_EMAIL_KEY = '@sonidosur_last_email';
 
+const { saveRegistration } = useRegistrationContext();
+
 export const InscripcionScreen = () => {
   const [datosInscripcion, setDatosInscripcion] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -55,7 +57,7 @@ export const InscripcionScreen = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-
+    
     try {
       await AsyncStorage.setItem(LAST_EMAIL_KEY, data.email.trim());
     } catch (e) {
@@ -65,6 +67,7 @@ export const InscripcionScreen = () => {
     setTimeout(() => {
       setLoading(false);
       setDatosInscripcion(data);
+      saveRegistration(data);
     }, 1000);
   };
 
