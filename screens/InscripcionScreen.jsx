@@ -1,4 +1,3 @@
-import { useRegistrationContext } from "../src/context/RegistrationContext";
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -15,12 +14,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { CampoFormulario } from '../components/CampoFormulario';
 import { TicketConfirmacion } from '../components/TicketConfirmacion';
+import { ResumenInscripcion } from '../components/ResumenInscripcion';
+
+import { useRegistrationContext } from '../src/context/RegistrationContext';
 
 const LAST_EMAIL_KEY = '@sonidosur_last_email';
 
-const { saveRegistration } = useRegistrationContext();
-
 export const InscripcionScreen = () => {
+
+  // Context
+  const {
+    saveRegistration,
+    clearRegistration,
+  } = useRegistrationContext();
+
   const [datosInscripcion, setDatosInscripcion] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -45,34 +52,56 @@ export const InscripcionScreen = () => {
     const precargarEmail = async () => {
       try {
         const savedEmail = await AsyncStorage.getItem(LAST_EMAIL_KEY);
+
         if (savedEmail) {
-          setValue('email', savedEmail, { shouldValidate: true });
+          setValue('email', savedEmail, {
+            shouldValidate: true,
+          });
         }
       } catch (e) {
-        console.error('Error al cargar email desde AsyncStorage', e);
+        console.error(
+          'Error al cargar email desde AsyncStorage',
+          e
+        );
       }
     };
+
     precargarEmail();
   }, [setValue]);
 
   const onSubmit = async (data) => {
     setLoading(true);
-    
+
     try {
-      await AsyncStorage.setItem(LAST_EMAIL_KEY, data.email.trim());
+      await AsyncStorage.setItem(
+        LAST_EMAIL_KEY,
+        data.email.trim()
+      );
     } catch (e) {
-      console.error('Error al guardar en AsyncStorage', e);
+      console.error(
+        'Error al guardar en AsyncStorage',
+        e
+      );
     }
 
     setTimeout(() => {
       setLoading(false);
+
+      // Estado local
       setDatosInscripcion(data);
+
+      // Estado global mediante Context
       saveRegistration(data);
     }, 1000);
   };
 
   const handleReset = () => {
+    // Limpiar estado local
     setDatosInscripcion(null);
+
+    // Limpiar estado global del Context
+    clearRegistration();
+
     reset({
       nombreCompleto: '',
       email: '',
@@ -85,46 +114,70 @@ export const InscripcionScreen = () => {
   return (
     <KeyboardAvoidingView
       style={styles.flexContainer}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={
+        Platform.OS === 'ios'
+          ? 'padding'
+          : 'height'
+      }
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+      >
         {!datosInscripcion ? (
           <View style={styles.formContainer}>
-            <Text style={styles.title}>Inscripción Sonido Sur</Text>
 
-            {}
+            <Text style={styles.title}>
+              Inscripción Sonido Sur
+            </Text>
+
             <Controller
               control={control}
               name="nombreCompleto"
               rules={{
                 required: 'Ingresá tu nombre completo',
                 validate: (v) =>
-                  (v && v.trim().length >= 3) || 'Ingresá tu nombre completo',
+                  (v && v.trim().length >= 3) ||
+                  'Ingresá tu nombre completo',
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({
+                field: {
+                  onChange,
+                  onBlur,
+                  value,
+                },
+              }) => (
                 <CampoFormulario
                   label="Nombre Completo *"
                   placeholder="Ej: Sofía Pérez"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  error={errors.nombreCompleto?.message}
+                  error={
+                    errors.nombreCompleto?.message
+                  }
                 />
               )}
             />
 
-            {}
             <Controller
               control={control}
               name="email"
               rules={{
                 required: 'Ingresá un email válido',
                 pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Ingresá un email válido',
+                  value:
+                    /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message:
+                    'Ingresá un email válido',
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({
+                field: {
+                  onChange,
+                  onBlur,
+                  value,
+                },
+              }) => (
                 <CampoFormulario
                   label="Email *"
                   placeholder="ejemplo@correo.com"
@@ -132,26 +185,37 @@ export const InscripcionScreen = () => {
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  error={errors.email?.message}
+                  error={
+                    errors.email?.message
+                  }
                 />
               )}
             />
 
-            {}
             <Controller
               control={control}
               name="edad"
               rules={{
-                required: 'La edad tiene que ser mayor a 12',
+                required:
+                  'La edad tiene que ser mayor a 12',
                 validate: (v) => {
                   const num = Number(v);
+
                   return (
-                    (!isNaN(num) && num >= 12 && num <= 99) ||
+                    (!isNaN(num) &&
+                      num >= 12 &&
+                      num <= 99) ||
                     'La edad tiene que ser mayor a 12'
                   );
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({
+                field: {
+                  onChange,
+                  onBlur,
+                  value,
+                },
+              }) => (
                 <CampoFormulario
                   label="Edad *"
                   placeholder="Ej: 22"
@@ -159,31 +223,49 @@ export const InscripcionScreen = () => {
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  error={errors.edad?.message}
+                  error={
+                    errors.edad?.message
+                  }
                 />
               )}
             />
 
-            {}
             <View style={styles.pickerSection}>
-              <Text style={styles.label}>Tipo de Entrada *</Text>
+              <Text style={styles.label}>
+                Tipo de Entrada *
+              </Text>
+
               <Controller
                 control={control}
                 name="tipoEntrada"
-                rules={{ required: 'Elegí un tipo de entrada' }}
-                render={({ field: { onChange, value } }) => (
-                  <View style={styles.selectorGroup}>
+                rules={{
+                  required:
+                    'Elegí un tipo de entrada',
+                }}
+                render={({
+                  field: {
+                    onChange,
+                    value,
+                  },
+                }) => (
+                  <View
+                    style={styles.selectorGroup}
+                  >
                     <TouchableOpacity
                       style={[
                         styles.optionBtn,
-                        value === 'general' && styles.optionSelected,
+                        value === 'general' &&
+                          styles.optionSelected,
                       ]}
-                      onPress={() => onChange('general')}
+                      onPress={() =>
+                        onChange('general')
+                      }
                     >
                       <Text
                         style={[
                           styles.optionText,
-                          value === 'general' && styles.optionTextSelected,
+                          value === 'general' &&
+                            styles.optionTextSelected,
                         ]}
                       >
                         General
@@ -193,14 +275,18 @@ export const InscripcionScreen = () => {
                     <TouchableOpacity
                       style={[
                         styles.optionBtn,
-                        value === 'vip' && styles.optionSelected,
+                        value === 'vip' &&
+                          styles.optionSelected,
                       ]}
-                      onPress={() => onChange('vip')}
+                      onPress={() =>
+                        onChange('vip')
+                      }
                     >
                       <Text
                         style={[
                           styles.optionText,
-                          value === 'vip' && styles.optionTextSelected,
+                          value === 'vip' &&
+                            styles.optionTextSelected,
                         ]}
                       >
                         VIP ⭐
@@ -209,22 +295,33 @@ export const InscripcionScreen = () => {
                   </View>
                 )}
               />
+
               {errors.tipoEntrada ? (
-                <Text style={styles.errorText}>{errors.tipoEntrada.message}</Text>
+                <Text
+                  style={styles.errorText}
+                >
+                  {errors.tipoEntrada.message}
+                </Text>
               ) : null}
             </View>
 
-            {}
             <Controller
               control={control}
               name="telefono"
               rules={{
                 pattern: {
                   value: /^[0-9]*$/,
-                  message: 'Solo se permiten números',
+                  message:
+                    'Solo se permiten números',
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({
+                field: {
+                  onChange,
+                  onBlur,
+                  value,
+                },
+              }) => (
                 <CampoFormulario
                   label="Teléfono (Opcional)"
                   placeholder="Ej: 1112345678"
@@ -232,16 +329,18 @@ export const InscripcionScreen = () => {
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  error={errors.telefono?.message}
+                  error={
+                    errors.telefono?.message
+                  }
                 />
               )}
             />
 
-            {}
             <TouchableOpacity
               style={[
                 styles.submitBtn,
-                (!isValid || loading) && styles.submitBtnDisabled,
+                (!isValid || loading) &&
+                  styles.submitBtnDisabled,
               ]}
               disabled={!isValid || loading}
               onPress={handleSubmit(onSubmit)}
@@ -249,12 +348,26 @@ export const InscripcionScreen = () => {
               {loading ? (
                 <ActivityIndicator color="#FFF" />
               ) : (
-                <Text style={styles.submitBtnText}>Confirmar inscripción</Text>
+                <Text
+                  style={styles.submitBtnText}
+                >
+                  Confirmar inscripción
+                </Text>
               )}
             </TouchableOpacity>
+
           </View>
         ) : (
-          <TicketConfirmacion datos={datosInscripcion} onReset={handleReset} />
+          <View>
+
+            <TicketConfirmacion
+              datos={datosInscripcion}
+              onReset={handleReset}
+            />
+
+            <ResumenInscripcion />
+
+          </View>
         )}
       </ScrollView>
     </KeyboardAvoidingView>
@@ -266,15 +379,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F7',
   },
+
   scrollContent: {
     padding: 24,
     paddingTop: 60,
   },
+
   formContainer: {
     backgroundColor: '#FFF',
     padding: 20,
     borderRadius: 12,
   },
+
   title: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -282,19 +398,23 @@ const styles = StyleSheet.create({
     color: '#111',
     textAlign: 'center',
   },
+
   pickerSection: {
     marginBottom: 16,
   },
+
   label: {
     fontSize: 14,
     fontWeight: '600',
     color: '#333',
     marginBottom: 6,
   },
+
   selectorGroup: {
     flexDirection: 'row',
     gap: 12,
   },
+
   optionBtn: {
     flex: 1,
     paddingVertical: 12,
@@ -304,23 +424,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F9F9F9',
   },
+
   optionSelected: {
     backgroundColor: '#FF007A',
     borderColor: '#FF007A',
   },
+
   optionText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#555',
   },
+
   optionTextSelected: {
     color: '#FFF',
   },
+
   errorText: {
     color: '#E53E3E',
     fontSize: 12,
     marginTop: 4,
   },
+
   submitBtn: {
     backgroundColor: '#FF007A',
     paddingVertical: 14,
@@ -328,9 +453,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
+
   submitBtnDisabled: {
     backgroundColor: '#A0A0A0',
   },
+
   submitBtnText: {
     color: '#FFF',
     fontSize: 16,

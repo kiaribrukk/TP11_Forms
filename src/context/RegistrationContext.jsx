@@ -1,9 +1,18 @@
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+} from 'react';
 
 const RegistrationContext = createContext();
 
-export function RegistrationProvider({ children }) {
-  const [registrationData, setRegistrationData] = useState(null);
+export const RegistrationProvider = ({
+  children,
+}) => {
+  const [
+    registrationData,
+    setRegistrationData,
+  ] = useState(null);
 
   const saveRegistration = (data) => {
     setRegistrationData(data);
@@ -24,8 +33,8 @@ export function RegistrationProvider({ children }) {
       {children}
     </RegistrationContext.Provider>
   );
-}
+};
 
-export function useRegistrationContext() {
+export const useRegistrationContext = () => {
   return useContext(RegistrationContext);
-}
+};
